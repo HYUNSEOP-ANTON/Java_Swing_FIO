@@ -1,10 +1,9 @@
 package panels;
 
 import shapes.*;
-
+import java.awt.Color;
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.awt.event.*;
 import java.io.*;
 import java.awt.Graphics;
@@ -13,6 +12,7 @@ public class DrawingPanel extends JPanel{
 	
 	final static int CIRCLE =1;
 	final static int SQUARE =2;
+	private Color whichColor = Color.black; //기본 컬러색 지정은 검은색으로 두되;
 	
 	private int selectedShapeType;
 	private ArrayList<Shape> shapes;
@@ -34,12 +34,12 @@ public class DrawingPanel extends JPanel{
 				
 				//만약 원이 선택된 상태이면..
 				if(selectedShapeType ==1){
-					Circle c1 = new Circle(x,y,50);
+					Circle c1 = new Circle(x,y,whichColor,50);
 					shapes.add(c1);
 				}
 				//정사각형 이라면..
 				else if(selectedShapeType ==2){
-					Square s1 = new Square(x,y,100);
+					Square s1 = new Square(x,y,whichColor,100);
 					shapes.add(s1);
 				}
 				//이후 모든걸 그리기
@@ -67,6 +67,11 @@ public class DrawingPanel extends JPanel{
 	public void setSelctedShapeType(int type) {
 		this.selectedShapeType = type;
 	}
+	//색을 받는 함수
+	public void setColor(Color c){
+		this.whichColor = c;
+	}
+	
 	public void clear() {
 		//리스트를 몽땅 지워버리면
 		shapes.clear();
@@ -190,19 +195,26 @@ public class DrawingPanel extends JPanel{
 			
 			String line;
 			Integer i1, i2;
+			int r,g,b;
 			Shape temp = null;
 			line = br.readLine();
 			while (line !=null)
 			{
+				//문자열 예시 (도형 형태) R G B X Y (반지름/변);
 				String[] infos = line.split(" ");
-				i1 = Integer.valueOf(infos[1]);
-				i2 = Integer.valueOf(infos[2]);
+				r = Integer.valueOf(infos[1]);
+				g = Integer.valueOf(infos[2]);
+				b = Integer.valueOf(infos[3]);
+				
+				i1 = Integer.valueOf(infos[4]);
+				i2 = Integer.valueOf(infos[5]);
+				
 				if(infos[0].equals("Circle")) {
-					temp = new Circle(i1,i2,50);
+					temp = new Circle(i1,i2,new Color(r,g,b),50);
 					shapes.add(temp);
 				}
 				else if(infos[0].equals("Square")) {
-					temp = new Square(i1,i2,100);
+					temp = new Square(i1,i2,new Color(r,g,b),100);
 					shapes.add(temp);
 				}
 				line = br.readLine();

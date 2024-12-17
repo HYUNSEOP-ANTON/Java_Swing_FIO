@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.Color;
 
 public class DrawingApp extends JFrame {
 
@@ -40,7 +41,7 @@ public class DrawingApp extends JFrame {
 
 	private void buildGUI() {
 		// 레이아웃 지정
-		this.setLayout(new GridLayout());
+		this.setLayout(new GridLayout(-1, 1));
 		// 그리기 패널 붙이기
 		drawingPanel = new DrawingPanel();
 		this.add(drawingPanel);
@@ -55,6 +56,7 @@ public class DrawingApp extends JFrame {
 		// 붙이기
 		mb.add(createFileMenu());
 		mb.add(createShapeMenu());
+		mb.add(createColorMenu());
 		// 메뉴바 설정하기
 		this.setJMenuBar(mb);
 	}
@@ -68,7 +70,7 @@ public class DrawingApp extends JFrame {
 
 		// 파일 선택기
 		JFileChooser chooser = new JFileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("Proper file only","txt","java","dat");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Proper file only", "txt", "java", "dat");
 		chooser.setFileFilter(filter);
 
 		// 하나의 리스너가 다 모든 컴포넌트를 연결 하기 위해서 4번 방법
@@ -97,7 +99,7 @@ public class DrawingApp extends JFrame {
 							return;
 						}
 						fillPatch = chooser.getSelectedFile().getPath();
-						drawingPanel.loadFromFile(fillPatch);
+						drawingPanel.loadFromTextFile(fillPatch);
 					} else if (whatStr.equals("Save")) {
 						ret = chooser.showSaveDialog(drawingPanel);
 
@@ -106,7 +108,7 @@ public class DrawingApp extends JFrame {
 							return;
 						}
 						fillPatch = chooser.getSelectedFile().getPath();
-						drawingPanel.saveToFile(fillPatch);
+						drawingPanel.saveToTextFile(fillPatch);
 					}
 				}
 			}
@@ -160,11 +162,54 @@ public class DrawingApp extends JFrame {
 		return newMenu;
 	}
 
+	private JMenu createColorMenu() {
+		JMenu menu = new JMenu("Color");
+		String[] colorList = {"Black", "Red","Blue","Green"};
+		JCheckBoxMenuItem[] miList = new JCheckBoxMenuItem[colorList.length];
+	
+		for (int i = 0; i <colorList.length; i++) {
+			miList[i] = new JCheckBoxMenuItem(colorList[i]);
+		}
+		
+		ActionListener eventTaker = new ActionListener() {
+			String what;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Object obj = e.getSource();
+				what = ((JCheckBoxMenuItem)obj).getText();
+				
+				for(JCheckBoxMenuItem i : miList) {
+					if(!i.getText().equals(what)) i.setSelected(false);
+				}
+					//확인용
+					System.out.println(what);
+					switch (what) {
+						case "Black":
+							drawingPanel.setColor(Color.black);
+							break;
+						case "Red":
+							drawingPanel.setColor(Color.red);
+							break;
+						case "Green":
+							drawingPanel.setColor(Color.green);
+							break;
+						case "Blue": 
+							drawingPanel.setColor(Color.blue);
+							break;
+					}
+				}	
+			};
+
+		for(JCheckBoxMenuItem i : miList) {
+			i.addActionListener(eventTaker);
+			menu.add(i);
+		}
+		return menu;
+	}
+	
 	public static void main(String[] args) {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
 		new DrawingApp();
-
 	}
-
 }
